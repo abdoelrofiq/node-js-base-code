@@ -25,9 +25,11 @@
 	},
 	"homepage": "https://github.com/abdoelrofiq/node-js-base-code#readme",
 	"devDependencies": {
+		"@commitlint/cli": "^17.0.0",
+		"@commitlint/config-conventional": "^17.0.0",
 		"eslint": "^8.16.0",
 		"eslint-config-prettier": "8.5.0",
-		"husky": "^8.0.0",
+		"husky": "^8.0.1",
 		"lint-staged": "^12.4.1",
 		"prettier": "2.6.2"
 	}

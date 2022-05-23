@@ -1,0 +1,33 @@
+{
+	"name": "node-js-base-code",
+	"version": "1.0.0",
+	"description": "node js base code",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepare": "husky install"
+	},
+	"lint-staged": {
+		"**/*.{js,jsx,ts,tsx}": [
+			"npx prettier --write",
+			"npx eslint --fix"
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/abdoelrofiq/node-js-base-code.git"
+	},
+	"author": "Abdul Rofiq",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/abdoelrofiq/node-js-base-code/issues"
+	},
+	"homepage": "https://github.com/abdoelrofiq/node-js-base-code#readme",
+	"devDependencies": {
+		"eslint": "^8.16.0",
+		"eslint-config-prettier": "8.5.0",
+		"husky": "^8.0.0",
+		"lint-staged": "^12.4.1",
+		"prettier": "2.6.2"
+	}
+}

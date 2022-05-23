@@ -32,5 +32,18 @@
 		"husky": "^8.0.1",
 		"lint-staged": "^12.4.1",
 		"prettier": "2.6.2"
+	},
+	"dependencies": {
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.1",
+		"express": "^4.18.1",
+		"filter-query-parser": "^2.2.0",
+		"lodash": "^4.17.21",
+		"mysql2": "^2.3.3",
+		"path": "^0.12.7",
+		"search-query-parser": "^1.6.0",
+		"sequelize": "^6.19.2",
+		"sequelize-cli": "^6.4.1",
+		"yup": "^0.32.11"
 	}
 }

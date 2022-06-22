@@ -1,3 +1,8 @@
+/*
+	tutorial resources
+	https://codebysamgan.com/how-to-create-model-association-in-sequelize-express-js-node-js
+*/
+
 'use strict';
 
 const fs = require('fs');

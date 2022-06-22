@@ -3,11 +3,11 @@ const { Op } = require('sequelize');
 
 exports.findAll =
 	(model) =>
-		(filter = null, filterQueryParams = {}, options = {}) => {
+		(search = null, FQP = {}, options = {}) => {
 			const rules = [];
-			let newFilter = {};
+			let newSearch = {};
 
-			_.forEach(filterQueryParams.rules, (row) => {
+			_.forEach(FQP.rules, (row) => {
 				let newOperator = null;
 				let newValue = null;
 				switch (row.operator) {
@@ -24,30 +24,30 @@ exports.findAll =
 				});
 			});
 
-			if (filterQueryParams.condition === 'AND') {
-				newFilter = { [Op.and]: rules };
-			} else if (filterQueryParams.condition === 'OR') {
-				newFilter = { [Op.or]: rules };
+			if (FQP.condition === 'AND') {
+				newSearch = { [Op.and]: rules };
+			} else if (FQP.condition === 'OR') {
+				newSearch = { [Op.or]: rules };
 			}
 
-			const filterObj = _.isObject(filter)
-				? filter
-				: !_.isNull(filter)
-					? { id: filter }
-					: filter;
-			const where = { ...newFilter, ...filterObj };
+			const searchObj = _.isObject(search)
+				? search
+				: !_.isNull(search)
+					? { id: search }
+					: {};
+			const where = { ...newSearch, ...searchObj };
 
 			return model.findAll({ where, ...options });
 		};
 
 exports.findOne =
 	(model) =>
-		(filter = null, options = {}) => {
-			const where = _.isObject(filter)
-				? filter
-				: !_.isNull(filter)
-					? { id: filter }
-					: filter;
+		(search = null, options = {}) => {
+			const where = _.isObject(search)
+				? search
+				: !_.isNull(search)
+					? { id: search }
+					: {};
 
 			return model.findOne({ where, ...options });
 		};
@@ -56,12 +56,12 @@ exports.create = (model) => (data) => {
 	return model.create(data);
 };
 
-exports.update = (model) => (filter, data) => {
-	return model.update(data, { where: filter });
+exports.update = (model) => (search, data) => {
+	return model.update(data, { where: search });
 };
 
-exports.delete = (model) => (filter) => {
-	return model.destroy({ where: filter });
+exports.delete = (model) => (search) => {
+	return model.destroy({ where: search });
 };
 
 module.exports.actions = (model) => ({

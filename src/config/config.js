@@ -1,3 +1,8 @@
+/*
+	tutorial resources
+	https://sequelize.org/docs/v6/other-topics/migrations/
+*/
+
 require('dotenv').config();
 
 module.exports = {

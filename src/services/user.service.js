@@ -4,7 +4,7 @@ const yup = require('yup');
 
 exports.findAllUserService = async (req, res, next) => {
 	try {
-		const usersData = await controller.user.findAll({}, req.filterQueryParams, {
+		const usersData = await controller.user.findAll({}, req.FQP, {
 			include: [{ model: Address }],
 		});
 

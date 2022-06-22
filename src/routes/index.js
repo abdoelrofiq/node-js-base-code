@@ -1,7 +1,7 @@
-const filterQueryParams = require('../core/queryParser');
+const FQP = require('../core/queryParser');
 const userRoutes = require('./user.route');
 
 module.exports = (app) => {
-	app.get('*', filterQueryParams.queryParser);
+	app.get('*', FQP.queryParser);
 	app.use('/users', userRoutes);
 };

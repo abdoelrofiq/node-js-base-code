@@ -1,21 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const users = require('../services/user.service');
+const userController = require('../controllers/user.controller');
 
-router.get('/', users.findAllUserService, users.returnUsersService);
+router.get('/', userController.findAllUser, userController.returnUsers);
 
-router.get('/:id', users.findUserByIdService, users.returnUserService);
+router.get('/:id', userController.findUserById, userController.returnUser);
 
-router.post('/', users.createUserService, users.returnUserService);
+router.post('/', userController.createUser, userController.returnUser);
 
 router.patch(
 	'/:id',
-	users.findUserByIdService,
-	users.updateUserService,
-	users.findUserByIdService,
-	users.returnUserService
+	userController.findUserById,
+	userController.updateUser,
+	userController.findUserById,
+	userController.returnUser
 );
 
-router.delete('/:id', users.findUserByIdService, users.deleteUserService);
+router.delete('/:id', userController.findUserById, userController.deleteUser);
 
 module.exports = router;

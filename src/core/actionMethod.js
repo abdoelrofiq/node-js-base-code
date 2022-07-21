@@ -6,31 +6,57 @@ class ActionsMethod {
 		this.model = model;
 	}
 
-	async findAll(search = null, FQP = {}, options = {}) {
-		const rules = [];
-		let newSearch = {};
+	operator(row) {
+		let newOperator = null;
+		let newValue = null;
+		switch (row.operator) {
+		case '=':
+			newOperator = Op.eq;
+			newValue = row.value;
+			break;
+		case '!=':
+			newOperator = Op.ne;
+			newValue = row.value;
+			break;
+		default:
+			newOperator = row.operator;
+		}
 
-		_.forEach(FQP.rules, (row) => {
-			let newOperator = null;
-			let newValue = null;
-			switch (row.operator) {
-			case '=':
-				newOperator = Op.eq;
-				newValue = row.value;
-				break;
-			default:
-				newOperator = row.operator;
+		return { newOperator, newValue };
+	}
+
+	conversionRules(rules) {
+		let newConversionRules = [];
+
+		_.forEach(rules, (row) => {
+			const operatorValue = this.operator(row);
+			if (row.condition) {
+				if (row.condition === 'AND') {
+					const andRulesChildValue = this.conversionRules(row.rules);
+					newConversionRules.push({ [Op.and]: andRulesChildValue });
+				} else if (row.condition === 'OR') {
+					const orRulesChildValue = this.conversionRules(row.rules);
+					newConversionRules.push({ [Op.or]: orRulesChildValue });
+				}
+			} else {
+				newConversionRules.push({
+					[row.field]: { [operatorValue.newOperator]: operatorValue.newValue },
+				});
 			}
-
-			rules.push({
-				[row.field]: { [newOperator]: newValue },
-			});
 		});
 
+		return newConversionRules;
+	}
+
+	async findAll(search = null, FQP = {}, options = {}) {
+		let newSearch = {};
+
+		const conversionRulesValue = this.conversionRules(FQP.rules);
+
 		if (FQP.condition === 'AND') {
-			newSearch = { [Op.and]: rules };
+			newSearch = { [Op.and]: conversionRulesValue };
 		} else if (FQP.condition === 'OR') {
-			newSearch = { [Op.or]: rules };
+			newSearch = { [Op.or]: conversionRulesValue };
 		}
 
 		const searchObj = _.isObject(search)

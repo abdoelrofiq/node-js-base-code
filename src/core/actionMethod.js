@@ -20,6 +20,7 @@ class ActionsMethod {
 			break;
 		default:
 			newOperator = row.operator;
+			newValue = row.value;
 		}
 
 		return { newOperator, newValue };

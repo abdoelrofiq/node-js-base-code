@@ -26,17 +26,17 @@ class ActionsMethod {
 		return { newOperator, newValue };
 	}
 
-	conversionRules(rules) {
+	rulesConversion(rules) {
 		let newConversionRules = [];
 
 		_.forEach(rules, (row) => {
 			const operatorValue = this.operator(row);
 			if (row.condition) {
 				if (row.condition === 'AND') {
-					const andRulesChildValue = this.conversionRules(row.rules);
+					const andRulesChildValue = this.rulesConversion(row.rules);
 					newConversionRules.push({ [Op.and]: andRulesChildValue });
 				} else if (row.condition === 'OR') {
-					const orRulesChildValue = this.conversionRules(row.rules);
+					const orRulesChildValue = this.rulesConversion(row.rules);
 					newConversionRules.push({ [Op.or]: orRulesChildValue });
 				}
 			} else {
@@ -52,12 +52,12 @@ class ActionsMethod {
 	async findAll(search = null, FQP = {}, options = {}) {
 		let newSearch = {};
 
-		const conversionRulesValue = this.conversionRules(FQP.rules);
+		const rulesConversionValue = this.rulesConversion(FQP.rules);
 
 		if (FQP.condition === 'AND') {
-			newSearch = { [Op.and]: conversionRulesValue };
+			newSearch = { [Op.and]: rulesConversionValue };
 		} else if (FQP.condition === 'OR') {
-			newSearch = { [Op.or]: conversionRulesValue };
+			newSearch = { [Op.or]: rulesConversionValue };
 		}
 
 		const searchObj = _.isObject(search)

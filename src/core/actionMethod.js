@@ -27,26 +27,26 @@ class ActionsMethod {
 	}
 
 	rulesConversion(rules) {
-		let newConversionRules = [];
+		let newRulesConversion = [];
 
 		_.forEach(rules, (row) => {
 			const operatorValue = this.operator(row);
 			if (row.condition) {
 				if (row.condition === 'AND') {
 					const andRulesChildValue = this.rulesConversion(row.rules);
-					newConversionRules.push({ [Op.and]: andRulesChildValue });
+					newRulesConversion.push({ [Op.and]: andRulesChildValue });
 				} else if (row.condition === 'OR') {
 					const orRulesChildValue = this.rulesConversion(row.rules);
-					newConversionRules.push({ [Op.or]: orRulesChildValue });
+					newRulesConversion.push({ [Op.or]: orRulesChildValue });
 				}
 			} else {
-				newConversionRules.push({
+				newRulesConversion.push({
 					[row.field]: { [operatorValue.newOperator]: operatorValue.newValue },
 				});
 			}
 		});
 
-		return newConversionRules;
+		return newRulesConversion;
 	}
 
 	async findAll(search = null, FQP = {}, options = {}) {

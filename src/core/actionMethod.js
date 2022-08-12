@@ -18,6 +18,14 @@ class ActionsMethod {
 			newOperator = Op.ne;
 			newValue = row.value;
 			break;
+		case 'IN':
+			newOperator = Op.in;
+			newValue = row.value;
+			break;
+		case 'NOT NULL':
+			newOperator = Op.ne;
+			newValue = null;
+			break;
 		default:
 			newOperator = row.operator;
 			newValue = row.value;

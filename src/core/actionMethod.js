@@ -103,7 +103,7 @@ class ActionsMethod {
 		return this.model.findOne({ where, ...options });
 	}
 
-	async count(search = null, FQP = {}) {
+	async count(search = null, FQP = {}, options = {}) {
 		let newSearch = {};
 		const rulesConversionValue = this.rulesConversion(FQP.rules);
 
@@ -122,6 +122,7 @@ class ActionsMethod {
 
 		return this.model.count({
 			where,
+			...options,
 		});
 	}
 

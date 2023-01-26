@@ -59,7 +59,52 @@ class ActionsMethod {
 
 	async findAll(search = null, FQP = {}, options = {}) {
 		let newSearch = {};
+		const limit = +(options.limit === 'all' ? 0 : _.get(options, 'limit', 10));
+		const offset =
+			options.page && options.page > 0 ? limit * (options.page - 1) : 0;
+		const otherOptions = _.omit(options, ['limit', 'offset']);
+		const rulesConversionValue = this.rulesConversion(FQP.rules);
 
+		let order = [];
+		if (options.sort) {
+			const direction = options.direction ? options.direction : 'asc';
+			order.push([options.sort, direction]);
+		}
+
+		if (FQP.condition === 'AND') {
+			newSearch = { [Op.and]: rulesConversionValue };
+		} else if (FQP.condition === 'OR') {
+			newSearch = { [Op.or]: rulesConversionValue };
+		}
+
+		const searchObj = _.isObject(search)
+			? search
+			: !_.isNull(search)
+				? { id: search }
+				: {};
+		const where = { ...newSearch, ...searchObj };
+
+		return this.model.findAll({
+			where,
+			...(limit === 0 ? {} : { limit }),
+			offset,
+			order,
+			...otherOptions,
+		});
+	}
+
+	async findOne(search = null, options = {}) {
+		const where = _.isObject(search)
+			? search
+			: !_.isNull(search)
+				? { id: search }
+				: {};
+
+		return this.model.findOne({ where, ...options });
+	}
+
+	async count(search = null, FQP = {}) {
+		let newSearch = {};
 		const rulesConversionValue = this.rulesConversion(FQP.rules);
 
 		if (FQP.condition === 'AND') {
@@ -75,17 +120,9 @@ class ActionsMethod {
 				: {};
 		const where = { ...newSearch, ...searchObj };
 
-		return this.model.findAll({ where, ...options });
-	}
-
-	async findOne(search = null, options = {}) {
-		const where = _.isObject(search)
-			? search
-			: !_.isNull(search)
-				? { id: search }
-				: {};
-
-		return this.model.findOne({ where, ...options });
+		return this.model.count({
+			where,
+		});
 	}
 
 	async create(data) {

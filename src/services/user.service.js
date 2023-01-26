@@ -2,7 +2,12 @@ const { Address } = require('../models');
 const yup = require('yup');
 const ActionsMethod = require('../core/actionMethod');
 const { User } = require('../models');
-
+const {
+	createGetDatasResponse,
+	createGetDataResponse,
+	createPostDataResponse,
+	createErrorResponse,
+} = require('../utils/response');
 class UserService extends ActionsMethod {
 	constructor() {
 		super(User);
@@ -11,13 +16,17 @@ class UserService extends ActionsMethod {
 	async findAllUserService(req, res, next) {
 		try {
 			const usersData = await this.findAll({}, req.FQP, {
+				...req.query,
 				include: [{ model: Address }],
 			});
 
-			req.users = usersData;
+			req.users = createGetDatasResponse(usersData, ['password'], {
+				totalAllData: await this.count(),
+				query: req.query,
+			});
 			next();
 		} catch (error) {
-			return res.status(400).send({ message: error.message });
+			return res.status(400).send(createErrorResponse(400, error.message));
 		}
 	}
 
@@ -31,10 +40,10 @@ class UserService extends ActionsMethod {
 				throw new Error('User not found.');
 			}
 
-			req.user = userData;
+			req.user = createGetDataResponse(userData);
 			next();
 		} catch (error) {
-			return res.status(400).send({ message: error.message });
+			return res.status(400).send(createErrorResponse(400, error.message));
 		}
 	}
 
@@ -60,10 +69,10 @@ class UserService extends ActionsMethod {
 
 			const newUser = await this.create(req.body);
 
-			req.user = newUser;
+			req.user = createPostDataResponse(newUser);
 			next();
 		} catch (error) {
-			return res.status(400).send({ message: error.message });
+			return res.status(400).send(createErrorResponse(400, error.message));
 		}
 	}
 
@@ -83,7 +92,7 @@ class UserService extends ActionsMethod {
 
 			next();
 		} catch (error) {
-			return res.status(400).send({ message: error.message });
+			return res.status(400).send(createErrorResponse(400, error.message));
 		}
 	}
 
@@ -94,8 +103,7 @@ class UserService extends ActionsMethod {
 	}
 
 	async returnUsersService(req, res) {
-		const result = { totalRows: req.users.length, rows: req.users };
-		return res.status(200).send(result);
+		return res.status(200).send(req.users);
 	}
 
 	async returnUserService(req, res) {

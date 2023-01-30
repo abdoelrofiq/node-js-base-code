@@ -26,6 +26,10 @@ class ActionsMethod {
 			newOperator = Op.ne;
 			newValue = null;
 			break;
+		case 'CONTAINS':
+			newOperator = Op.like;
+			newValue = `%${row.value}%`;
+			break;
 		default:
 			newOperator = row.operator;
 			newValue = row.value;

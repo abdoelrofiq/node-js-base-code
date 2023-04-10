@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { Op } = require('sequelize');
+const { allModelNames } = require('../models');
 
 class ActionsMethod {
 	constructor(model) {
@@ -143,4 +144,16 @@ class ActionsMethod {
 	}
 }
 
-module.exports = ActionsMethod;
+class Models {
+	constructor() {
+		this.connection = {};
+
+		for (const key in allModelNames) {
+			const model = allModelNames[key];
+			const keyName = Object.keys(model)?.[0];
+			this.connection[keyName] = new ActionsMethod(model[keyName]);
+		}
+	}
+}
+
+module.exports = Models;

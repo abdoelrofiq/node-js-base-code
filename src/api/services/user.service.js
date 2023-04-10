@@ -1,27 +1,24 @@
 const { Address } = require('../models');
 const yup = require('yup');
-const ActionsMethod = require('../core/actionMethod');
-const { User } = require('../models');
+const Models = require('../core/actionMethod');
 const {
 	createGetDatasResponse,
 	createGetDataResponse,
 	createPostDataResponse,
 	createErrorResponse,
 } = require('../utils/response');
-class UserService extends ActionsMethod {
-	constructor() {
-		super(User);
-	}
+const { hashText } = require('../utils/encryption');
 
+class UserService extends Models {
 	async findAllUserService(req, res, next) {
 		try {
-			const usersData = await this.findAll({}, req.FQP, {
+			const usersData = await this.connection.user.findAll({}, req.FQP, {
 				...req.query,
 				include: [{ model: Address }],
 			});
 
 			req.users = createGetDatasResponse(usersData, ['password'], {
-				totalAllData: await this.count(),
+				totalAllData: await this.connection.user.count(),
 				query: req.query,
 			});
 			next();
@@ -32,7 +29,7 @@ class UserService extends ActionsMethod {
 
 	async findUserByIdService(req, res, next) {
 		try {
-			const userData = await this.findOne(req.params.id, {
+			const userData = await this.connection.user.findOne(req.params.id, {
 				include: [{ model: Address }],
 			});
 
@@ -65,9 +62,10 @@ class UserService extends ActionsMethod {
 		});
 
 		try {
-			await schema.validate({ ...req.body });
+			await schema.validate(req.body);
 
-			const newUser = await this.create(req.body);
+			req.body.password = await hashText(req.body.password);
+			const newUser = await this.connection.user.create(req.body);
 
 			req.user = createPostDataResponse(newUser);
 			next();
@@ -86,9 +84,9 @@ class UserService extends ActionsMethod {
 		});
 
 		try {
-			await schema.validate({ ...req.body });
+			await schema.validate(req.body);
 
-			await this.update({ id: req.params.id }, req.body);
+			await this.connection.user.update({ id: req.params.id }, req.body);
 
 			next();
 		} catch (error) {
@@ -97,7 +95,7 @@ class UserService extends ActionsMethod {
 	}
 
 	async deleteUserService(req, res) {
-		await this.delete({ id: req.params.id });
+		await this.connection.user.delete({ id: req.params.id });
 
 		return res.sendStatus(204);
 	}

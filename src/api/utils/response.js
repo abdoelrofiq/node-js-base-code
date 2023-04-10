@@ -8,15 +8,18 @@ exports.createGetDatasResponse = (data, omittedAttributes = [], options) => {
 	});
 
 	if (options.totalAllData && options.query) {
-		if (options.query.limit !== 'all') {
-			pagination.currentPage = Number(options.query.page);
+		const limit = options.query.limit ? options.query.limit : 10;
+		const currentPage = isNaN(Number(options.query.page))
+			? 1
+			: Number(options.query.page);
+
+		if (limit !== 'all') {
+			pagination.currentPage = currentPage;
 			pagination.totalPages = Math.ceil(
-				Number(options.totalAllData) / Number(options.query.limit)
+				Number(options.totalAllData) / Number(limit)
 			);
 		}
-		pagination.limit = isNaN(options.query.limit)
-			? options.query.limit
-			: Number(options.query.limit);
+		pagination.limit = isNaN(limit) ? limit : Number(limit);
 		pagination.totalRows = result.length;
 	}
 
